@@ -24,7 +24,7 @@ const resizeFile = async (file) => {
 
 const generateThumbnail = async (file) => {
 	console.log('Generating thumbnail');
-	return await sharp(file).resize({ width: 50 }).toBuffer();
+	return await sharp(file).resize({ width: 25 }).toBuffer();
 };
 
 const saveFile = async (bucketName, fileName, file) => {
@@ -57,15 +57,14 @@ exports.onImageUpload = async (obj, context) => {
 
 		const resized = await resizeFile(file);
 
-		await saveFile(process.env.DEST_BUCKET_NAME, obj.name, resized);
+		const folderName = obj.name.split('/')[0];
+		const fileName = obj.name.split('/')[1];
+
+		await saveFile(process.env.DEST_BUCKET_NAME, `${folderName}/${fileName}`, resized);
 
 		const thumbnail = await generateThumbnail(file);
 
-		await saveFile(
-			process.env.DEST_BUCKET_NAME,
-			`thumbnail_${obj.name}`,
-			thumbnail
-		);
+		await saveFile(process.env.DEST_BUCKET_NAME, `${folderName}/thumbnail_${fileName}`, thumbnail);
 
 		await deleteFile(obj.bucket, obj.name);
 	} catch (error) {
