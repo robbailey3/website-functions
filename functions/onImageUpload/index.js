@@ -1,6 +1,6 @@
 const { Storage } = require('@google-cloud/storage');
 const sharp = require('sharp');
-require('dotenv').config({ path: '/custom/path/to/.env' });
+require('dotenv').config({ path: '../../.env' });
 
 const getFile = async (bucketName, fileName) => {
 	console.log(`Getting file ${fileName} from bucket ${bucketName}`);
@@ -12,7 +12,7 @@ const getFile = async (bucketName, fileName) => {
 
 	console.log(`Downloading file ${fileName} from bucket ${bucketName}`);
 	const downloadResponse = await file.download();
-	console.log('Downloaded file', { downloadResponse });
+	console.log(`Downloaded file with length ${downloadResponse[0].length}`);
 
 	return downloadResponse[0];
 };
@@ -36,6 +36,7 @@ const saveFile = async (bucketName, fileName, file) => {
 	const fileUpload = bucket.file(fileName);
 
 	await fileUpload.save(file);
+	console.log(`Saved file ${fileName} to bucket ${bucketName}`);
 };
 
 const deleteFile = async (bucketName, fileName) => {
@@ -51,8 +52,7 @@ const deleteFile = async (bucketName, fileName) => {
 
 exports.onImageUpload = async (obj, context) => {
 	try {
-		console.log({ obj, context });
-
+		console.log(`Event received for ${obj.name} at ${Date.now()}`);
 		const file = await getFile(obj.bucket, obj.name);
 
 		const resized = await resizeFile(file);
