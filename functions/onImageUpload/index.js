@@ -60,11 +60,11 @@ exports.onImageUpload = async (obj, context) => {
 		const folderName = obj.name.split('/')[0];
 		const fileName = obj.name.split('/')[1];
 
-		await saveFile(process.env.DEST_BUCKET_NAME, `${folderName}/${fileName}`, resized);
+		await saveFile(process.env.DEST_BUCKET_NAME, obj.name, resized);
 
 		const thumbnail = await generateThumbnail(file);
 
-		await saveFile(process.env.DEST_BUCKET_NAME, `${folderName}/thumbnail_${fileName}`, thumbnail);
+		await saveFile(process.env.DEST_BUCKET_NAME, `thumbnail_${obj.name}`, thumbnail);
 
 		await deleteFile(obj.bucket, obj.name);
 	} catch (error) {
