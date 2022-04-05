@@ -57,9 +57,6 @@ exports.onImageUpload = async (obj, context) => {
 
 		const resized = await resizeFile(file);
 
-		const folderName = obj.name.split('/')[0];
-		const fileName = obj.name.split('/')[1];
-
 		await saveFile(process.env.DEST_BUCKET_NAME, obj.name, resized);
 
 		const thumbnail = await generateThumbnail(file);
